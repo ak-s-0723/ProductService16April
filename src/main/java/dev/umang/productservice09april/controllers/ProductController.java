@@ -5,7 +5,12 @@ import dev.umang.productservice09april.models.Product;
 import dev.umang.productservice09april.services.FakeStoreProductService;
 import dev.umang.productservice09april.services.ProductService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -46,17 +51,18 @@ public class ProductController {
     price:
      */
     @GetMapping("/products/{id}")
-    public Product getProductDetails(@PathVariable("id") Long id){
-        /*
-        1 - > directly make a call fakestore api
-        2 - > productService.getProductDetails()
-         */
+    public Product getProductDetails(@PathVariable("id") Long id) {
         return productService.getSingleProduct(id);
     }
 
     @GetMapping("/products")
-    public void getAllProducts(){
+    public ResponseEntity<List<Product>> getAllProducts(){
+        throw new RuntimeException();
+       // List<Product> products = productService.getAllProducts();
+       // return new ResponseEntity<>(products, HttpStatus.CONFLICT);
     }
+
+
 
 
     public void updateProduct(){

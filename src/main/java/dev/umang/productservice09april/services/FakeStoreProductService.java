@@ -3,10 +3,13 @@ package dev.umang.productservice09april.services;
 import dev.umang.productservice09april.dtos.FakeStoreProductdto;
 import dev.umang.productservice09april.models.Category;
 import dev.umang.productservice09april.models.Product;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("fakestore")
@@ -17,18 +20,30 @@ public class FakeStoreProductService implements ProductService{
     }
     @Override
     public Product getSingleProduct(Long productId) {
-        FakeStoreProductdto fakeStoreProductResponse = restTemplate.getForObject(
+
+        if(productId == 0) {
+            throw new IllegalArgumentException("Invalid ProductId, Please try out some other productId");
+        }
+
+        ResponseEntity<FakeStoreProductdto> fakeStoreProductResponse = restTemplate.getForEntity(
                 "https://fakestoreapi.com/products/" + productId,
                 FakeStoreProductdto.class);
-        /*
-        make a call to external fakestore
-         */
-        return fakeStoreProductResponse.toProduct();
+
+        return fakeStoreProductResponse.getBody().toProduct();
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return null;
+        List<Product> products = new ArrayList<>();
+
+        FakeStoreProductdto[] fakeStoreProductdtos = restTemplate.
+                getForObject("https://fakestoreapi.com/products",FakeStoreProductdto[].class);
+
+       for(FakeStoreProductdto fakeStoreProductdto : fakeStoreProductdtos) {
+            products.add(fakeStoreProductdto.toProduct());
+       }
+
+       return products;
     }
 
     @Override
